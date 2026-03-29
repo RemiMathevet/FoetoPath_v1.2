@@ -1,0 +1,69 @@
+COMPTE-RENDU IMAGERIE (RADIOGRAPHIES)
+======================================
+Dossier : {{ numero }}
+Date    : {{ date_examen }}
+
+TERME
+-----
+{{ rad_terme_sa or "#" }} SA + {{ rad_terme_jours or "0" }} j
+
+ASPECT GENERAL
+--------------
+{{ rad_aspect_general or "Non renseigne" }}
+
+COTES
+-----
+Droite : {{ rad_cotes.droite if rad_cotes.droite else "#" }}
+Gauche : {{ rad_cotes.gauche if rad_cotes.gauche else "#" }}
+
+FORME DU THORAX
+---------------
+{{ rad_thorax_forme or "Non renseigne" }}
+
+VERTEBRES
+---------
+{% if rad_vertebres.aspects %}{{ rad_vertebres.aspects|join(', ') }}{% else %}Non renseigne{% endif %}
+{% if rad_vertebres.remarques %}Remarques : {{ rad_vertebres.remarques }}{% endif %}
+
+ASPECT DES OS
+-------------
+{% if rad_aspect_os.aspects %}{{ rad_aspect_os.aspects|join(', ') }}{% else %}Non renseigne{% endif %}
+{% if rad_aspect_os.remarques %}Remarques : {{ rad_aspect_os.remarques }}{% endif %}
+
+BIOMETRIES OSSEUSES
+-------------------
+BIP osseux : {{ rad_biometries.bip_osseux_mm or "#" }} mm
+PC radio   : {{ rad_biometries.pc_radio_mm or "#" }} mm
+
+Os longs (Chitty) :
+{% for key, bone in (rad_os_longs or {}).items() %}{% if bone.moyenne %}  {{ key }}: D={{ bone.droite or "-" }} G={{ bone.gauche or "-" }} Moy={{ bone.moyenne }} Z={{ bone.zscore_chitty if bone.zscore_chitty is not none else "-" }}
+{% endif %}{% endfor %}
+
+SCORES STATURAUX
+----------------
+Hadlock (1984) : {{ rad_scores.hadlock_sa or "#" }} SA
+Adalian (2002) : {{ rad_scores.adalian_sa or "#" }} SA
+
+MATURATION OSSEUSE
+------------------
+{% for m in rad_maturation %}  {{ m.sa }} SA — {{ m.label }} : {{ m.status }}
+{% endfor %}{% if not rad_maturation %}Non renseigne{% endif %}
+
+{% if rad_remarques %}REMARQUES
+---------
+{{ rad_remarques }}
+{% endif %}
+
+{% if rad_hpo_codes %}CODES HPO
+---------
+{% for h in rad_hpo_codes %}{{ h.code }}  {{ h.term_fr or h.term or "" }}{% if h.source_value %}  ({{ h.source_value }}){% endif %}{% if h.auto %} [auto]{% endif %}
+{% endfor %}{% endif %}
+
+CONCLUSION
+----------
+Examen radiologique realise a {{ rad_terme_sa or "#" }} SA.
+
+{% set os_anormaux = [] %}{% for key, bone in (rad_os_longs or {}).items() %}{% if bone.zscore_chitty is not none and bone.zscore_chitty|abs > 2 %}{% if os_anormaux.append(key ~ " (Z=" ~ bone.zscore_chitty ~ ")") %}{% endif %}{% endif %}{% endfor %}{% if rad_aspect_os.aspects and rad_aspect_os.aspects != ["Normal"] %}Anomalies osseuses : {{ rad_aspect_os.aspects|join(', ') }}.
+{% endif %}{% if os_anormaux %}Os longs hors normes : {{ os_anormaux|join(', ') }}.
+{% endif %}{% if rad_maturation %}{% set absents = [] %}{% for m in rad_maturation %}{% if m.status == "absent" %}{% if absents.append(m.label ~ " (" ~ m.sa ~ " SA)") %}{% endif %}{% endif %}{% endfor %}{% if absents %}Points de maturation absents : {{ absents|join(', ') }}.
+{% endif %}{% endif %}{% if not os_anormaux and (not rad_aspect_os.aspects or rad_aspect_os.aspects == ["Normal"]) %}Pas d'anomalie significative identifiee a l'examen radiologique.{% endif %}
