@@ -523,5 +523,11 @@ async function saveAndExport() {
   }
 }
 </script>
+<script>
+// ═══════ PWA Registration ═══════
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/pwa/placentas/sw.js').catch(() => {});
+}
+</script>
 </body>
 </html>

@@ -1,10 +1,13 @@
 // Service Worker — Macro Placenta PWA
-const CACHE_NAME = 'placenta-v1';
+const CACHE_NAME = 'placenta-v2';
 const ASSETS = [
   '/pwa/placentas/',
+  '/pwa/placentas/index.html',
   '/pwa/placentas/macro_frais.html',
   '/pwa/placentas/tranches_section.html',
   '/pwa/placentas/manifest.json',
+  '/pwa/placentas/logo.png',
+  '/pwa/placentas/sw.js',
 ];
 
 self.addEventListener('install', (e) => {

@@ -6,6 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>FoetoPath - Imagerie Radio</title>
+<meta name="theme-color" content="#0e1117">
+<link rel="manifest" href="/pwa/foet/manifest.json">
 <link rel="stylesheet" href="style.css">
 <style>
 /* ── Radio-specific styles ── */
@@ -646,6 +648,12 @@ loadRefTables().then(function() {
   validate();
 });
 applySettings();
+</script>
+<script>
+// ═══ PWA Registration ═══
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/pwa/foet/sw.js').catch(() => {});
+}
 </script>
 </body>
 </html>

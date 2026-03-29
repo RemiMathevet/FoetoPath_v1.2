@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0e1117">
 <title>FœtoPath – Paramètres</title>
+<link rel="manifest" href="/pwa/foet/manifest.json">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -97,6 +101,12 @@ function applyToggle(s) {
 var settings = loadSettings();
 applyToggle(settings);
 applySettings();
+</script>
+<script>
+// ═══ PWA Registration ═══
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/pwa/foet/sw.js').catch(() => {});
+}
 </script>
 </body>
 </html>

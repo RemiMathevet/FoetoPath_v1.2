@@ -1,8 +1,9 @@
 /* FoetoPath PWA — Service Worker */
-const CACHE_NAME = 'foetopath-foet-v3';
+const CACHE_NAME = 'foetopath-foet-v4';
 const ASSETS = [
   '/pwa/foet/',
   '/pwa/foet/index.html',
+  '/pwa/foet/dossier_router.html',
   '/pwa/foet/style.css',
   '/pwa/foet/helpers.js',
   '/pwa/foet/pwa_common.js',
