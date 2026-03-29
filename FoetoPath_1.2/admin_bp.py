@@ -305,6 +305,23 @@ def api_save_settings():
     return jsonify({"message": "Paramètres sauvegardés"})
 
 
+@admin_bp.route("/api/settings/test-path", methods=["POST"])
+def api_test_path():
+    """Vérifie si un chemin existe et est accessible en écriture."""
+    data = request.get_json() or {}
+    raw = data.get("path", "").strip()
+    if not raw:
+        return jsonify({"exists": False, "writable": False, "error": "Chemin vide"})
+    p = Path(os.path.expanduser(raw))
+    exists = p.is_dir()
+    writable = exists and os.access(str(p), os.W_OK)
+    return jsonify({
+        "exists": exists,
+        "writable": writable,
+        "resolved": str(p),
+    })
+
+
 # ── Calculs biométriques ──────────────────────────────────────────────────
 
 @admin_bp.route("/api/cases/<int:case_id>/compute", methods=["POST"])
