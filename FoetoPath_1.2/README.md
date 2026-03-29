@@ -188,16 +188,3 @@ FoetoPath/
 | `/admin/api/sync` | POST | Sync locale depuis data_root |
 | `/api/browse` | POST | Lister les cas dans un dossier de lames |
 | `/api/slides` | POST | Lister lames + photos d'un dossier |
-
-## TODO
-
-- [ ] Muller-Brochut 2018 (organes 12-20 SA) dans `reference_data.py`
-- [ ] Maroun stratifié par macération dans les calculs
-- [ ] Organes pairs individuels : données publiées (remplacer dérivés moy/2, sd/√2)
-- [ ] Module radio (examen radiographique)
-- [ ] Module neuropathologie
-- [ ] Module placenta (macro + micro, Amsterdam)
-- [ ] Template CR exhaustif
-- [ ] Export Word (.docx) des CR
-- [ ] Remplissage des étapes macro (frais/autopsie/fixé/neuropath) dans l'onglet Dossiers
-- [ ] Affinage de l'appairage (photos fixé × lames par organe)
