@@ -106,6 +106,21 @@ body {
 }
 .form-input:focus { border-color: var(--accent); }
 .form-input::placeholder { color: var(--text3); }
+.path-hint {
+    font-size: 11px; color: var(--text3); margin-top: 2px; line-height: 1.5;
+}
+.path-hint code {
+    background: var(--bg3); padding: 1px 5px; border-radius: 3px;
+    font-family: var(--mono); font-size: 11px; color: var(--text2);
+}
+.path-hint b { color: var(--text2); font-weight: 600; }
+.path-status {
+    font-size: 11px; margin-top: 4px; padding: 4px 8px;
+    border-radius: 4px; display: inline-block;
+}
+.path-status.ok { color: var(--success); background: var(--success-bg); }
+.path-status.err { color: var(--danger); background: var(--danger-bg); }
+.path-status.warn { color: var(--warning); background: var(--warning-bg); }
 
 /* ── Save bar ────────────────────────────── */
 .save-bar {
@@ -217,12 +232,20 @@ fetch('/auth/api/me').then(r=>r.json()).then(u=>{
         </div>
         <div class="form-grid">
             <div class="form-group full">
-                <label class="form-label">Racine dossiers lames (année)</label>
-                <input class="form-input" id="s_slides_root" placeholder="Ex: D:\Lames\2026">
+                <label class="form-label">Dossier de sortie (cas, photos, JSON, bases de données)</label>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <input class="form-input" id="s_data_root" placeholder="Par défaut : ~/Documents/FoetoPath" style="flex:1;">
+                    <button class="btn" onclick="testPath('s_data_root')" title="Vérifier le chemin" style="white-space:nowrap;padding:10px 14px;">Tester</button>
+                </div>
+                <span class="path-hint" id="hint_data_root">Ce dossier contiendra <b>Foetus/</b> et <b>Placentas/</b> (photos, JSON, DB). Si vide → <code>~/Documents/FoetoPath</code></span>
             </div>
             <div class="form-group full">
-                <label class="form-label">Racine données foetus (dossiers cas + photos)</label>
-                <input class="form-input" id="s_data_root" placeholder="Ex: D:\FoetoPath\foetus">
+                <label class="form-label">Dossier lames (images WSI)</label>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <input class="form-input" id="s_slides_root" placeholder="Ex: D:\Lames\2026" style="flex:1;">
+                    <button class="btn" onclick="testPath('s_slides_root')" title="Vérifier le chemin" style="white-space:nowrap;padding:10px 14px;">Tester</button>
+                </div>
+                <span class="path-hint">Racine année contenant les dossiers de lames (.mrxs, .svs, .ndpi…)</span>
             </div>
             <div class="form-group">
                 <label class="form-label">Port du viewer</label>
@@ -429,6 +452,33 @@ function esc(s) {
     const d = document.createElement('div');
     d.textContent = s || '';
     return d.innerHTML;
+}
+
+// ── Test path ────────────────────────────
+async function testPath(inputId) {
+    const input = document.getElementById(inputId);
+    const val = input.value.trim();
+    if (!val) {
+        toast('Chemin vide — le défaut ~/Documents/FoetoPath sera utilisé', 'success');
+        return;
+    }
+    try {
+        const r = await fetch('/admin/api/settings/test-path', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path: val }),
+        });
+        const res = await r.json();
+        if (res.exists && res.writable) {
+            toast('✓ Dossier accessible en écriture', 'success');
+        } else if (res.exists && !res.writable) {
+            toast('⚠ Dossier existe mais pas en écriture', 'error');
+        } else {
+            toast('⚠ Dossier introuvable — il sera créé automatiquement', '');
+        }
+    } catch (e) {
+        toast('Erreur: ' + e.message, 'error');
+    }
 }
 
 loadSettings();
